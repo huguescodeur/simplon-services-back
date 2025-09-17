@@ -30,9 +30,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-6@(p6szc$6^q8$zbse4xs#jy*wpg68qx03f7k^+0(j-su9(@5s'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS').split(',')
+# ALLOWED_HOSTS = config('ALLOWED_HOSTS').split(',')
+ALLOWED_HOSTS = [
+    "simplon-services-back.onrender.com",
+]
 
 
 
@@ -224,55 +227,72 @@ SIMPLE_JWT = {
 
 
 # CORS configuration pour React
-CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS').split(',')
-CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS')
+# CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS').split(',')
+# CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS').split(',')
+
+CORS_ALLOWED_ORIGINS = [
+    "https://simplonservices.vercel.app",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://simplonservices.vercel.app",
+]
 
 
 from corsheaders.defaults import default_headers
 
 CORS_ALLOW_HEADERS = [
-    'accept',
-    'accept-encoding',
-    'authorization',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
-    'cookie',  
+    "authorization",
+    "content-type",
+    "x-csrftoken",
+    "accept",
+    "origin",
+    "user-agent",
+    "cookie",
+    "dnt",
+    "x-requested-with",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
 
-SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = True
-SESSION_COOKIE_SAMESITE = None
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'None'
 
 JWT_COOKIE_DOMAIN = None
 
+CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = False
-CSRF_COOKIE_SECURE = False
-CSRF_COOKIE_SAMESITE = None
+CSRF_COOKIE_SAMESITE = 'None'
 
-JWT_COOKIE_SECURE = not DEBUG
+# CSRF_COOKIE_SECURE = False
+# CSRF_COOKIE_SAMESITE = 'Lax'
+# CSRF_COOKIE_HTTPONLY = False
+
+# JWT_COOKIE_SECURE = False
+# JWT_COOKIE_SAMESITE = 'Lax'
+# JWT_COOKIE_DOMAIN = None
+JWT_COOKIE_SECURE = True
 JWT_COOKIE_HTTPONLY = True
-JWT_COOKIE_SAMESITE = 'Strict' if not DEBUG else 'Lax'
+JWT_COOKIE_SAMESITE = 'None'
+JWT_COOKIE_DOMAIN = "simplon-services-back.onrender.com"
 
 
-if not DEBUG:
-    SECURE_SSL_REDIRECT = True
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-    SESSION_COOKIE_SECURE = True       
-    CSRF_COOKIE_SECURE = True          
 
-    SECURE_BROWSER_XSS_FILTER = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True
+# if not DEBUG:
+#     SECURE_SSL_REDIRECT = True
+#     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-    SECURE_HSTS_SECONDS = 31536000
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
+#     SESSION_COOKIE_SECURE = True       
+#     CSRF_COOKIE_SECURE = True          
+
+#     SECURE_BROWSER_XSS_FILTER = True
+#     SECURE_CONTENT_TYPE_NOSNIFF = True
+
+#     SECURE_HSTS_SECONDS = 31536000
+#     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+#     SECURE_HSTS_PRELOAD = True
 
 
 

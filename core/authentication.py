@@ -8,28 +8,28 @@ from rest_framework_simplejwt.tokens import UntypedToken
 from django.contrib.auth.models import AnonymousUser
 import logging
 
-# User = get_user_model()
+User = get_user_model()
 logger = logging.getLogger(__name__)
 
-# class EmailOrUsernameModelBackend(ModelBackend):
-#     def authenticate(self, request, username=None, password=None, **kwargs):
-#         if username is None:
-#             username = kwargs.get(User.USERNAME_FIELD)
+class EmailOrUsernameModelBackend(ModelBackend):
+    def authenticate(self, request, username=None, password=None, **kwargs):
+        if username is None:
+            username = kwargs.get(User.USERNAME_FIELD)
 
-#         if username is None or password is None:
-#             return None
+        if username is None or password is None:
+            return None
 
-#         try:
-#             user = User.objects.get(
-#                 Q(username__iexact=username) | Q(email__iexact=username)
-#             )
-#         except User.DoesNotExist:
-#             User().set_password(password)
-#             return None
-#         else:
-#             if user.check_password(password) and self.user_can_authenticate(user):
-#                 return user
-#         return None
+        try:
+            user = User.objects.get(
+                Q(username__iexact=username) | Q(email__iexact=username)
+            )
+        except User.DoesNotExist:
+            User().set_password(password)
+            return None
+        else:
+            if user.check_password(password) and self.user_can_authenticate(user):
+                return user
+        return None
 
 
 # class CookieJWTAuthentication(JWTAuthentication):
@@ -59,15 +59,6 @@ logger = logging.getLogger(__name__)
 #             raise InvalidToken(f"Token invalide: {e}")
 
 
-# class CookieJWTMiddleware(MiddlewareMixin):
-#     def process_request(self, request):
-       
-#         if not request.META.get('HTTP_AUTHORIZATION'):
-#             access_token = request.COOKIES.get('access_token')
-#             if access_token:
-#                 request.META['HTTP_AUTHORIZATION'] = f'Bearer {access_token}'
-        
-#         return None
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import InvalidToken
@@ -100,3 +91,14 @@ class CookieJWTAuthentication(JWTAuthentication):
         except Exception as e:
             logger.warning(f"[CookieJWTAuthentication] Échec d'authentification via cookie: {e}")
             return None
+
+
+class CookieJWTMiddleware(MiddlewareMixin):
+    def process_request(self, request):
+       
+        if not request.META.get('HTTP_AUTHORIZATION'):
+            access_token = request.COOKIES.get('access_token')
+            if access_token:
+                request.META['HTTP_AUTHORIZATION'] = f'Bearer {access_token}'
+        
+        return None

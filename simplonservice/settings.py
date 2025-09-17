@@ -30,9 +30,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-6@(p6szc$6^q8$zbse4xs#jy*wpg68qx03f7k^+0(j-su9(@5s'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ["http://127.0.0.1:5173"]
+ALLOWED_HOSTS = config('ALLOWED_HOSTS').split(',')
+
 
 
 # Application definition
@@ -223,13 +224,9 @@ SIMPLE_JWT = {
 
 
 # CORS configuration pour React
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:5500",
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-]
+CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS').split(',')
+CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS')
+
 
 from corsheaders.defaults import default_headers
 
@@ -249,30 +246,34 @@ CORS_ALLOW_HEADERS = [
 CORS_ALLOW_CREDENTIALS = True
 
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SECURE = False  
-SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SAMESITE = None
 
 JWT_COOKIE_DOMAIN = None
 
 CSRF_COOKIE_HTTPONLY = False
 CSRF_COOKIE_SECURE = False
-CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SAMESITE = None
 
-JWT_COOKIE_SECURE = not DEBUG  
+JWT_COOKIE_SECURE = not DEBUG
 JWT_COOKIE_HTTPONLY = True
 JWT_COOKIE_SAMESITE = 'Strict' if not DEBUG else 'Lax'
 
 
-# Configuration sécurisée pour la production
 if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    
-    SESSION_COOKIE_SECURE = False
-    CSRF_COOKIE_SECURE = False
-    
+
+    SESSION_COOKIE_SECURE = True       
+    CSRF_COOKIE_SECURE = True          
+
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
+
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+
 
 
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  

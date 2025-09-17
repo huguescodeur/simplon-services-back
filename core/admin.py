@@ -4,7 +4,7 @@ from django.contrib import admin
 
 from django.contrib.auth.admin import UserAdmin
 from django.utils.html import format_html
-from .models import CustomUser, PurchaseRequest, RequestStep, Attachment
+from .models import CustomUser, PasswordResetCode, PurchaseRequest, RequestStep, Attachment, UserActivity
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
@@ -23,6 +23,34 @@ class CustomUserAdmin(UserAdmin):
             'fields': ('role', 'department', 'phone')
         }),
     )
+    
+@admin.register(UserActivity)
+class UserActivityAdmin(admin.ModelAdmin):
+    list_display = ('user', 'action', 'performed_by', 'timestamp', 'ip_address')
+    list_filter = ('action', 'timestamp', 'performed_by__role')
+    search_fields = ('user__username', 'performed_by__username', 'details')
+    readonly_fields = ('timestamp',)
+
+    def has_add_permission(self, request):
+        return False  
+    def has_change_permission(self, request, obj=None):
+        return False  
+    
+
+@admin.register(PasswordResetCode)
+class PasswordResetCodeAdmin(admin.ModelAdmin):
+    list_display = ('user', 'code', 'created_at', 'expires_at', 'is_used', 'ip_address')
+    list_filter = ('is_used', 'created_at')
+    search_fields = ('user__username', 'code')
+    readonly_fields = ('created_at', 'expires_at', 'code')
+
+    def has_add_permission(self, request):
+        return False  
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+
 
 class RequestStepInline(admin.TabularInline):
     model = RequestStep

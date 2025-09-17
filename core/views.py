@@ -869,18 +869,9 @@ def dashboard(request):
                 count=Count('id')
             ).exclude(user__department__isnull=True).exclude(user__department='').order_by('-count')
             
-            if not dept_stats.exists():
-                dept_stats = all_requests.values('user__profile__department').annotate(
-                    count=Count('id')
-                ).exclude(user__profile__department__isnull=True).exclude(user__profile__department='').order_by('-count')
-            
             result = []
             for stat in dept_stats:
-                dept_name = (
-                    stat.get('user__department') or 
-                    stat.get('user__profile__department') or 
-                    'Département inconnu'
-                )
+                dept_name = stat.get('user__department') or 'Département inconnu'
                 if dept_name and dept_name.strip():
                     result.append({
                         'department': dept_name,
@@ -910,6 +901,7 @@ def dashboard(request):
                 'department': 'Données indisponibles',
                 'requests_count': all_requests.count()
             }]
+
     
     def get_role_specific_requests(requests, role, user_id):
         """Filtrer les demandes selon le niveau de responsabilité"""

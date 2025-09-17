@@ -226,17 +226,8 @@ SIMPLE_JWT = {
 }
 
 
-# CORS configuration pour React
-# CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS').split(',')
-# CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS').split(',')
-
-CORS_ALLOWED_ORIGINS = [
-    "https://simplonservices.vercel.app",
-]
-
-CSRF_TRUSTED_ORIGINS = [
-    "https://simplonservices.vercel.app",
-]
+CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS').split(',')
+CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS').split(',')
 
 
 from corsheaders.defaults import default_headers
@@ -259,12 +250,17 @@ SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'None'
 
-JWT_COOKIE_DOMAIN = None
-
+# Config Prod
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = False
 CSRF_COOKIE_SAMESITE = 'None'
 
+JWT_COOKIE_SECURE = True
+JWT_COOKIE_HTTPONLY = True
+JWT_COOKIE_SAMESITE = 'None'
+JWT_COOKIE_DOMAIN = config('JWT_COOKIE_DOMAIN')
+
+# Config Dev
 # CSRF_COOKIE_SECURE = False
 # CSRF_COOKIE_SAMESITE = 'Lax'
 # CSRF_COOKIE_HTTPONLY = False
@@ -272,10 +268,7 @@ CSRF_COOKIE_SAMESITE = 'None'
 # JWT_COOKIE_SECURE = False
 # JWT_COOKIE_SAMESITE = 'Lax'
 # JWT_COOKIE_DOMAIN = None
-JWT_COOKIE_SECURE = True
-JWT_COOKIE_HTTPONLY = True
-JWT_COOKIE_SAMESITE = 'None'
-JWT_COOKIE_DOMAIN = "simplon-services-back.onrender.com"
+
 
 
 

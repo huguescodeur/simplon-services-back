@@ -151,41 +151,26 @@ class CustomTokenRefreshView(TokenRefreshView):
 
 class LogoutView(TokenRefreshView):
     def get_cookie_settings(self):
+        """Renvoie uniquement les paramètres valides pour delete_cookie"""
         return {
-            'samesite': settings.JWT_COOKIE_SAMESITE,
-            'secure': settings.JWT_COOKIE_SECURE,
+            'path': '/',
             'domain': settings.JWT_COOKIE_DOMAIN,
-            'path': '/'
+            'samesite': settings.JWT_COOKIE_SAMESITE
         }
-
 
     def post(self, request, *args, **kwargs):
         print("=== DÉBUT LOGOUT SERVEUR ===")
         print(f"Cookies reçus: {list(request.COOKIES.keys())}")
-        
 
         response = Response({
             'message': 'Déconnexion réussie',
             'success': True
         }, status=status.HTTP_200_OK)
-        
+
         cookie_settings = self.get_cookie_settings()
 
-        # response.delete_cookie(
-        #     'access_token',
-        #     path='/',
-        #     samesite='Strict' if not settings.DEBUG else 'Lax',
-        #     domain=None  
-        # )
-        # response.delete_cookie(
-        #     'refresh_token',
-        #     path='/',
-        #     samesite='Strict' if not settings.DEBUG else 'Lax',
-        #     domain=None
-        # )
         response.delete_cookie('access_token', **cookie_settings)
-        response.delete_cookie(
-            'refresh_token', **cookie_settings)
+        response.delete_cookie('refresh_token', **cookie_settings)
 
         print("✓ Cookies supprimés côté serveur")
         print("=== FIN LOGOUT SERVEUR ===")

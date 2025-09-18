@@ -119,7 +119,7 @@ class CustomTokenRefreshView(TokenRefreshView):
             cookie_config = {
                 'httponly': True,
                 'secure': settings.DEBUG is False,
-                'samesite': 'Strict' if not settings.DEBUG else 'Lax',
+                'samesite': settings.JWT_COOKIE_SAMESITE,
                 'path': '/'
             }
             

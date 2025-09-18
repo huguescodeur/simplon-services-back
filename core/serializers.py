@@ -460,7 +460,7 @@ class PurchaseRequestListSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'user', 'user_id', 'user_name','department', 'created_by',
             'item_description', 'quantity', 
-            'estimated_cost', 'urgency', 'urgency_display', 'status', 
+            'estimated_cost', 'final_cost', 'urgency', 'urgency_display', 'status', 
             'status_display', 'current_step', 'created_at', 'updated_at',
             'justification',
             'rejected_by', 'rejected_by_name', 'rejected_by_role',

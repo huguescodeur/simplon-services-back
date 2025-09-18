@@ -70,7 +70,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             response.set_cookie(
                 key='access_token',
                 value=access_token,
-                max_age=60
+                max_age=60,
                 # max_age=3600,  
                 **cookie_config
             )

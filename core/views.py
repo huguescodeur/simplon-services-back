@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 
 # Create your views here.
 from django.shortcuts import get_object_or_404
-from django.db.models import Q, Count, Sum, Avg
+from django.db.models import Q, Count, Sum, Avg, Case, When, Value, F
 from django.utils import timezone
 from datetime import datetime, timedelta
 from rest_framework.decorators import api_view, permission_classes
@@ -800,15 +800,28 @@ def dashboard(request):
         
         approved_requests = period_requests.filter(status='director_approved')
         
+        total_amount = approved_requests.annotate(
+            cost_to_use=Case(
+                When(final_cost__isnull=False, then=F('final_cost')),
+                When(estimated_cost__isnull=False, then=F('estimated_cost')),
+                default=Value(0)
+            )
+        ).aggregate(total=Sum('cost_to_use'))['total'] or 0
+        
+        logger.info(f"Total amount {total_amount}")
+        
+        
+        
         return {
             'total_requests': period_requests.count(),
             'approved_requests': approved_requests.count(),
             'in_progress': period_requests.filter(
                 status__in=['mg_approved', 'accounting_reviewed']
             ).count(),
-            'total_amount': approved_requests.aggregate(
-                total=Sum('estimated_cost')
-            )['total'] or 0,
+            # 'total_amount': approved_requests.aggregate(
+            #     total=Sum('estimated_cost')
+            # )['total'] or 0,
+            'total_amount': total_amount,
             'validation_rate': (
                 approved_requests.count() / period_requests.count() * 100
                 if period_requests.count() > 0 else 0

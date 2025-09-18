@@ -591,13 +591,14 @@ def validate_request(request, pk):
             purchase_request.rejected_at = timezone.now()
             purchase_request.rejected_by_role = user_role
             
-            if final_cost:
-                        purchase_request.final_cost = final_cost
         else:  
             if user_role == 'mg':
                     purchase_request.status = 'mg_approved'
                     purchase_request.mg_validated_by = request.user  
-                    purchase_request.mg_validated_at = timezone.now()  
+                    purchase_request.mg_validated_at = timezone.now() 
+                    
+                    if final_cost:
+                        purchase_request.final_cost = final_cost 
             elif user_role == 'accounting':
                     purchase_request.status = 'accounting_reviewed'
                     purchase_request.budget_available = budget_available

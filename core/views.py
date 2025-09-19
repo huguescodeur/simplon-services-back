@@ -809,7 +809,11 @@ def dashboard(request):
         )
         ).aggregate(total=Sum('cost_to_use'))['total'] or 0
         
+        approved_requests = approved_requests.count()
+        
         logger.info(f"Total amount {total_amount}")
+        logger.info("approved_requests: {approved_requests}")
+        logger.info(list(approved_requests.values("id", "final_cost", "estimated_cost")))
         
         
         

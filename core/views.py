@@ -834,6 +834,7 @@ def dashboard(request):
         ).aggregate(total=Sum('cost_to_use'))['total'] or 0
         
         approved_count = approved_queryset.count()
+        total_requests = period_requests.count()
         
         
         
@@ -844,8 +845,8 @@ def dashboard(request):
         
         
         return {
-            'total_requests': period_requests.count(),
-            'approved_requests': approved_queryset.count(),
+            'total_requests': total_requests,
+            'approved_requests': approved_count,
             'in_progress': period_requests.filter(
                 status__in=['mg_approved', 'accounting_reviewed']
             ).count(),
@@ -854,8 +855,8 @@ def dashboard(request):
             # )['total'] or 0,
             'total_amount': total_amount,
             'validation_rate': (
-                approved_queryset.count() / period_requests.count() * 100
-                if period_requests.count() > 0 else 0
+                approved_count / total_requests * 100
+                if total_requests > 0 else 0
             )
         }
     

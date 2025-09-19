@@ -61,7 +61,6 @@ Créer un fichier `.env` à la racine du projet :
 ```env
 # Django
 SECRET_KEY=your_secret_key_here
-DEBUG=False
 ALLOWED_HOSTS=your-domain.com,localhost
 DATABASE_NAME=your_db_name
 DATABASE_USER=your_db_user

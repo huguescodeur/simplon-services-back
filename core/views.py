@@ -798,9 +798,9 @@ def dashboard(request):
                 created_at__lte=end_date
             )
         
-        approved_requests = period_requests.filter(status='director_approved')
+        approved_queryset = period_requests.filter(status='director_approved')
         
-        total_amount = approved_requests.annotate(
+        total_amount = approved_queryset.annotate(
             cost_to_use = Case(
             When(final_cost__isnull=False, then=F('final_cost')),  # Priorité au final_cost
             When(final_cost__isnull=True, estimated_cost__isnull=False, then=F('estimated_cost')),
@@ -809,17 +809,19 @@ def dashboard(request):
         )
         ).aggregate(total=Sum('cost_to_use'))['total'] or 0
         
-        approved_requests = approved_requests.count()
+        approved_count = approved_queryset.count()
+        
+        
         
         logger.info(f"Total amount {total_amount}")
-        logger.info("approved_requests: {approved_requests}")
-        logger.info(list(approved_requests.values("id", "final_cost", "estimated_cost")))
+        logger.info(f"Approved requests count: {approved_count}")
+        logger.info(list(approved_queryset.values("id", "final_cost", "estimated_cost")))
         
         
         
         return {
             'total_requests': period_requests.count(),
-            'approved_requests': approved_requests.count(),
+            'approved_requests': approved_queryset.count(),
             'in_progress': period_requests.filter(
                 status__in=['mg_approved', 'accounting_reviewed']
             ).count(),

@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 
 # Create your views here.
 from django.shortcuts import get_object_or_404
-from django.db.models import Q, Count, Sum, Avg, Case, When, Value, F
+from django.db.models import Q, Count, Sum, Avg, Case, When, Value, F, DecimalField
 from django.utils import timezone
 from datetime import datetime, timedelta
 from rest_framework.decorators import api_view, permission_classes
@@ -801,11 +801,12 @@ def dashboard(request):
         approved_requests = period_requests.filter(status='director_approved')
         
         total_amount = approved_requests.annotate(
-            cost_to_use=Case(
-                When(final_cost__isnull=False, then=F('final_cost')),
-                When(estimated_cost__isnull=False, then=F('estimated_cost')),
-                default=Value(0)
-            )
+            cost_to_use = Case(
+            When(final_cost__isnull=False, then=F('final_cost')),  # Priorité au final_cost
+            When(final_cost__isnull=True, estimated_cost__isnull=False, then=F('estimated_cost')),
+            default=Value(0),
+            output_field=DecimalField(max_digits=12, decimal_places=2)
+        )
         ).aggregate(total=Sum('cost_to_use'))['total'] or 0
         
         logger.info(f"Total amount {total_amount}")

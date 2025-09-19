@@ -830,7 +830,7 @@ def dashboard(request):
             # )['total'] or 0,
             'total_amount': total_amount,
             'validation_rate': (
-                approved_requests.count() / period_requests.count() * 100
+                approved_queryset.count() / period_requests.count() * 100
                 if period_requests.count() > 0 else 0
             )
         }

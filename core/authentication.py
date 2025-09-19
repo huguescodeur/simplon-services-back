@@ -63,15 +63,6 @@ class CookieJWTAuthentication(JWTAuthentication):
             return None
 
 
-# class CookieJWTMiddleware(MiddlewareMixin):
-#     def process_request(self, request):
-       
-#         if not request.META.get('HTTP_AUTHORIZATION'):
-#             access_token = request.COOKIES.get('access_token')
-#             if access_token:
-#                 request.META['HTTP_AUTHORIZATION'] = f'Bearer {access_token}'
-        
-#         return None
 
 class CookieJWTMiddleware(MiddlewareMixin):
     def process_request(self, request):

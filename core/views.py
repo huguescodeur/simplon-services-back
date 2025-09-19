@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model
 # Create your views here.
 from django.shortcuts import get_object_or_404
 from django.db.models import Q, Count, Sum, Avg, Case, When, Value, F, DecimalField
+from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 from datetime import datetime, timedelta
 from rest_framework.decorators import api_view, permission_classes
@@ -775,18 +776,37 @@ def dashboard(request):
     
     all_requests = PurchaseRequest.objects.select_related('user', 'rejected_by').all()
     
-    def get_period_stats(months_offset=0, user_filter=None):
-        """Calculer les stats pour une période donnée avec offset et filtre utilisateur optionnel"""
-        now = timezone.now()
-        start_date = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-        start_date = start_date - timedelta(days=30 * months_offset)
+    # def get_period_stats(months_offset=0, user_filter=None):
+    #     """Calculer les stats pour une période donnée avec offset et filtre utilisateur optionnel"""
+    #     now = timezone.now()
+    #     start_date = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    #     start_date = start_date - timedelta(days=30 * months_offset)
         
+    #     if months_offset > 0:
+    #         end_date = start_date.replace(day=1) + timedelta(days=32)
+    #         end_date = end_date.replace(day=1) - timedelta(seconds=1)
+    #     else:
+    #         end_date = now
+            
+    #     if user_filter:
+    #         period_requests = user_filter.filter(
+    #             created_at__gte=start_date,
+    #             created_at__lte=end_date
+    #         )
+    #     else:
+    #         period_requests = all_requests.filter(
+    #             created_at__gte=start_date,
+    #             created_at__lte=end_date
+    #         )
+    
+    def get_period_stats(months_offset=0, user_filter=None):
+        now = timezone.now()
+        start_date = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0) - relativedelta(months=months_offset)
         if months_offset > 0:
-            end_date = start_date.replace(day=1) + timedelta(days=32)
-            end_date = end_date.replace(day=1) - timedelta(seconds=1)
+            end_date = start_date + relativedelta(months=1) - timedelta(seconds=1)
         else:
             end_date = now
-            
+
         if user_filter:
             period_requests = user_filter.filter(
                 created_at__gte=start_date,
@@ -797,6 +817,10 @@ def dashboard(request):
                 created_at__gte=start_date,
                 created_at__lte=end_date
             )
+            
+        logger.info(f"Calculating stats for period: {start_date} to {end_date}")
+
+
         
         approved_queryset = period_requests.filter(status='director_approved')
         
